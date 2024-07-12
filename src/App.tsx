@@ -1,9 +1,12 @@
+import { RouterProvider } from "react-router-dom";
+import { ToastContainer, Zoom } from "react-toastify";
+import { router } from "./Routes";
+
 function App() {
   return (
     <>
-      <div className="flex items-center justify-center">
-        <div className="text-center text-blue-500 font-montserrat">ciao</div>
-      </div>
+      <RouterProvider router={router} />
+      <ToastContainer autoClose={2000} hideProgressBar transition={Zoom} />
     </>
   );
 }
