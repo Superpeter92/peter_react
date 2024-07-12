@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Input } from "../components/UI/Input";
 import { Select } from "../components/UI/Select";
+import Input from "../components/UI/Input";
 type Option = { id: string; nome: string };
 
 type FormField = {
@@ -20,26 +20,25 @@ const options: Option[] = [
   { id: "2", nome: "Option 2" },
   { id: "3", nome: "Option 3" },
 ];
-const FormComponent: React.FC = () => {
+const Login: React.FC = () => {
   const [formState, setFormState] = useState<FormState>({
-    name: { value: "", error: false },
-    email: { value: "", error: false },
-    password: { value: "", error: false },
-    number: { value: "", error: false },
-    option: { value: "", error: false },
+    name: { value: "", error: true },
+    email: { value: "", error: true },
+    password: { value: "", error: true },
+    number: { value: "", error: true },
+    option: { value: "", error: true },
   });
   const [submitted, setSubmitted] = useState(false);
 
   const handleChange = (
     field: keyof FormState,
     value: string,
-    isValid: boolean,
+    error: boolean,
   ) => {
     setFormState((prevState) => ({
       ...prevState,
-      [field]: { value, error:!isValid },
+      [field]: { value, error:error },
     }));
-    console.log(isValid, field);
   };
 
   const isFormValid = () => {
@@ -78,8 +77,8 @@ const FormComponent: React.FC = () => {
           type="text"
           placeholder="Enter your name"
           required={true}
-          onChange={(value: string, isValid: boolean) =>
-            handleChange("name", value, isValid)
+          onChange={(value: string, error: boolean) =>
+            handleChange("name", value, error)
           }
           submitted={submitted}
         />
@@ -89,8 +88,8 @@ const FormComponent: React.FC = () => {
           type="email"
           placeholder="Enter your email"
           required={true}
-          onChange={(value: string, isValid: boolean) =>
-            handleChange("email", value, isValid)
+          onChange={(value: string, error: boolean) =>
+            handleChange("email", value, error)
           }
           submitted={submitted}
         />
@@ -100,8 +99,8 @@ const FormComponent: React.FC = () => {
           type="password"
           placeholder="Enter your password"
           required={true}
-          onChange={(value: string, isValid: boolean) =>
-            handleChange("password", value, isValid)
+          onChange={(value: string, error: boolean) =>
+            handleChange("password", value, error)
           }
           submitted={submitted}
         />
@@ -111,8 +110,8 @@ const FormComponent: React.FC = () => {
           type="number"
           placeholder="Enter your number"
           required={true}
-          onChange={(value: string, isValid: boolean) =>
-            handleChange("number", value, isValid)
+          onChange={(value: string, error: boolean) =>
+            handleChange("number", value, error)
           }
           submitted={submitted}
         />
@@ -120,8 +119,8 @@ const FormComponent: React.FC = () => {
           submitted={submitted}
           label="Option"
           name="option"
-          onChange={(value: string, isValid: boolean) =>
-            handleChange("option", value, isValid)
+          onChange={(value: string, error: boolean) =>
+            handleChange("option", value, error)
           }
           option={options}
           required
@@ -132,4 +131,4 @@ const FormComponent: React.FC = () => {
   );
 };
 
-export default FormComponent;
+export default Login;

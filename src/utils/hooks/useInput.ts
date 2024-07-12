@@ -8,6 +8,8 @@ interface UseInputProps {
   name: string;
   required?: boolean;
   type?: "text" | "email" | "password" | "number";
+  onChange: (value: string, error: boolean) => void; // Aggiunta onChange qui
+
 }
 
 interface UseInputReturn {
@@ -48,6 +50,7 @@ export const useInput = ({
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue(e.target.value);
+    console.log(error, 'useInput');
   };
 
   return { value, setValue, error, handleChange };

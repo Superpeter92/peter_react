@@ -40,7 +40,7 @@ export function Select({
   const handleSelectChange = (selectedValue: string) => {
     handleChange(selectedValue);
     if (onChange) {
-      onChange(selectedValue, error);
+      onChange(selectedValue, !error);
     }
   };
 
@@ -59,7 +59,7 @@ export function Select({
               "relative h-10 w-full cursor-default rounded-lg border border-gray-200 py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm",
               {
                 "bg-white": !error && !submitted,
-                "border-red-300": error && submitted,
+                "border-red-500": error && submitted,
                 "bg-gray-200": disabled,
               },
             )}
@@ -109,7 +109,7 @@ export function Select({
                   key={opt.id}
                   className={({ focus }) =>
                     `relative h-10 cursor-default select-none py-2 pl-10 pr-4 ${
-                      focus ? "bg-teal-600 text-white" : "text-gray-900"
+                      focus ? "bg-gray-300 text-white" : "text-gray-900"
                     }`
                   }
                   value={opt.nome}

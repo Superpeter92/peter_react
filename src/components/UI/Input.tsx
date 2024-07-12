@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/solid";
 import { useInput } from "../../utils/hooks/useInput";
 
-export const Input: React.FC<{
+interface InputProps {
   name: string;
   label: string;
   type: "text" | "email" | "password" | "number";
@@ -10,9 +10,11 @@ export const Input: React.FC<{
   disabled?: boolean;
   required?: boolean;
   initialValue?: string;
-  onChange?: (value: string, error: boolean) => void;
+  onChange: (value: string, error: boolean) => void;
   submitted: boolean;
-}> = ({
+}
+
+const Input: React.FC<InputProps> = ({
   name,
   label,
   type = "text",
@@ -28,12 +30,13 @@ export const Input: React.FC<{
     name,
     required,
     type,
+    onChange,
   });
 
   const [showPassword, setShowPassword] = useState(false);
 
   const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
+    setShowPassword((prevShowPassword) => !prevShowPassword);
   };
 
   const inputClassName = `
@@ -45,7 +48,7 @@ export const Input: React.FC<{
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     handleChange(e);
     if (onChange) {
-      onChange(e.target.value, error);
+      onChange(e.target.value, !error); 
     }
   };
 
@@ -94,3 +97,5 @@ export const Input: React.FC<{
     </div>
   );
 };
+
+export default Input;
