@@ -18,7 +18,7 @@ type SelectProps = {
   required?: boolean;
   initialValue?: string;
   submitted?: boolean;
-  onChange?: (value: string, error: boolean) => void;
+  onChange: (value: string, error: boolean) => void;
   option: Option[];
 };
 
@@ -32,31 +32,27 @@ export function Select({
   option,
   onChange,
 }: SelectProps) {
-  const { error, handleChange, selectedValue } = useSelect({
-    initialValue: initialValue,
+  const { selectedValue, error, handleChange } = useSelect({
+    initialValue,
     required,
+    onChange
   });
 
-  const handleSelectChange = (selectedValue: string) => {
-    handleChange(selectedValue);
-    if (onChange) {
-      onChange(selectedValue, !error);
-    }
-  };
+  
 
   return (
     <div className="w-full flex-col">
       <p className="mb-1">{label}</p>
       <Listbox
         value={selectedValue}
-        onChange={handleSelectChange}
+        onChange={handleChange}
         name={name}
         disabled={disabled}
       >
         <div className="relative">
           <ListboxButton
             className={clsx(
-              "relative h-10 w-full cursor-default rounded-lg border border-gray-200 py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm",
+              "relative h-10 w-full cursor-default rounded-lg border bg-white border-gray-200 py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm",
               {
                 "bg-white": !error && !submitted,
                 "border-red-500": error && submitted,

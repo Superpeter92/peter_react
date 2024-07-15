@@ -12,6 +12,7 @@ interface InputProps {
   initialValue?: string;
   onChange: (value: string, error: boolean) => void;
   submitted: boolean;
+  login?: boolean;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -24,12 +25,14 @@ const Input: React.FC<InputProps> = ({
   initialValue = "",
   onChange,
   submitted,
+  login = false,
 }) => {
   const { value, error, handleChange } = useInput({
     initialValue,
     name,
     required,
     type,
+    login,
     onChange,
   });
 
@@ -45,11 +48,13 @@ const Input: React.FC<InputProps> = ({
     ${error && submitted ? "border-red-500" : ""}
   `;
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    handleChange(e);
-    if (onChange) {
-      onChange(e.target.value, !error); 
-    }
+  const getErrorMessage = () => {
+    if (required && value.trim() === "") return "Campo Obbligatorio";
+    if (type === "email" && !login && value.trim() !== "")
+      return "Inserire una email valida";
+    if (type === "password" && !login && value.trim() !== "")
+      return "La password deve contenere almeno 8 caratteri, una lettera maiuscola, una minuscola, un numero e un carattere speciale";
+    return "";
   };
 
   return (
@@ -65,7 +70,7 @@ const Input: React.FC<InputProps> = ({
           name={name}
           placeholder={placeholder}
           value={value}
-          onChange={handleInputChange}
+          onChange={handleChange}
           aria-invalid={error && submitted}
           className={inputClassName}
         />
@@ -84,15 +89,7 @@ const Input: React.FC<InputProps> = ({
         )}
       </div>
       {error && submitted && (
-        <p className="text-red-700">
-          {required && value.trim() === "" && "Campo Obbligatorio"}
-          {type === "email" &&
-            value.trim() !== "" &&
-            "Inserire una email valida"}
-          {type === "password" &&
-            value.trim() !== "" &&
-            "La password deve contenere almeno 8 caratteri, una lettera maiuscola, una minuscola, un numero e un carattere speciale"}
-        </p>
+        <p className="text-red-700">{getErrorMessage()}</p>
       )}
     </div>
   );

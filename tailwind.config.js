@@ -6,6 +6,11 @@ export default {
       fontFamily: {
         montserrat: ["Montserrat", "sans-serif"],
       },
+      colors: {
+        yellow: "#ffd52d",
+        purplue: "#6b9bff",
+        darkPurplue: "#bd34fe"
+      },
     },
   },
   plugins: [require("@tailwindcss/forms")],
