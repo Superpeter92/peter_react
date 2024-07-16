@@ -110,7 +110,7 @@ const Login: React.FC = () => {
       }
 
       setUser(res);
-      navigate('/dashboard/home');
+      navigate('/profile');
     } catch (error) {
       console.error("Login error:", error);
       // Puoi aggiungere una gestione dell'errore qui, ad esempio:

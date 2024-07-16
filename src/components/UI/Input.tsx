@@ -59,7 +59,7 @@ const Input: React.FC<InputProps> = ({
 
   return (
     <div className="flex-col">
-      <label htmlFor={name} className="mb-1">
+      <label htmlFor={name} className="mb-1 text-purplue">
         {label}
       </label>
       <div className="relative">
@@ -81,9 +81,9 @@ const Input: React.FC<InputProps> = ({
             className="absolute inset-y-0 right-0 flex items-center pr-3"
           >
             {showPassword ? (
-              <EyeSlashIcon className="h-5 w-5 text-gray-400" />
+              <EyeSlashIcon className="h-5 w-5 text-purplue" />
             ) : (
-              <EyeIcon className="h-5 w-5 text-gray-400" />
+              <EyeIcon className="h-5 w-5 text-purplue" />
             )}
           </button>
         )}

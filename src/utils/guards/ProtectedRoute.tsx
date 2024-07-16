@@ -9,6 +9,6 @@ export function ProtectedRoute(props: PropsWithChildren) {
   }
 
   if (!user) {
-    return <Navigate to="/" />;
+    return <Navigate to="/login" />;
   }
 }

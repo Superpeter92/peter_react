@@ -60,7 +60,7 @@ const navAnagrafica = [
   {
     name: "Gestione Utenti",
 
-    path: "/dashboard/lista-utenti",
+    path: "/users-list",
 
     icon: UserIcon,
   },
@@ -82,48 +82,9 @@ const navAnagrafica = [
   },
 ];
 
-const navLogistica = [
-  {
-    name: "Gestione Aziende",
 
-    path: "/dashboard/lista-aziende",
 
-    icon: BuildingOfficeIcon,
-  },
-  {
-    name: "Gestione Sedi",
-
-    path: "/dashboard/lista-sedi",
-
-    icon: BuildingOffice2Icon,
-  },
-
-  {
-    name: "Gestione Piani",
-
-    path: "/dashboard/lista-piani",
-
-    icon: Square3Stack3DIcon,
-  },
-
-  {
-    name: "Gestione Stanze",
-
-    path: "/dashboard/lista-stanze",
-
-    icon: Squares2X2Icon,
-  },
-
-  {
-    name: "Gestione Postazioni",
-
-    path: "/dashboard/lista-posti",
-
-    icon: ComputerDesktopIcon,
-  },
-];
-
-const userNavigation = [{ name: "Profilo", path: "#" }];
+const userNavigation = [{ name: "Profilo", path: "/profile" }];
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -293,8 +254,9 @@ export const Sidebar: React.FC<{ children?: React.ReactNode }> = ({
             >
               <Bars3Icon className="h-6 w-6 text-white" aria-hidden="true" />
             </button>
-            <img className="h-8 w-auto" src={logo} alt="logo" />
-
+            <NavLink to="/">
+              <img className="h-8 w-auto" src={logo} alt="logo" />
+            </NavLink>
             <div className="flex flex-1 justify-end gap-x-4 self-stretch lg:gap-x-6">
               <div className="flex items-center gap-x-4 lg:gap-x-6">
                 {/* Profile section */}
@@ -315,7 +277,7 @@ export const Sidebar: React.FC<{ children?: React.ReactNode }> = ({
                           <ChevronUpIcon
                             className={classNames(
                               open ? "rotate-180 transform" : "",
-                              "h-5 w-5 text-white ml-2",
+                              "ml-2 h-5 w-5 text-white",
                             )}
                           />
                         </span>
@@ -328,7 +290,8 @@ export const Sidebar: React.FC<{ children?: React.ReactNode }> = ({
                           <MenuItem key={item.name}>
                             <NavLink
                               to={item.path}
-                              className="block px-3 py-1 text-sm leading-6 text-purplue data-[focus]:bg-gray-100">
+                              className="block px-3 py-1 text-sm leading-6 text-purplue data-[focus]:bg-gray-100"
+                            >
                               {item.name}
                             </NavLink>
                           </MenuItem>
@@ -341,7 +304,7 @@ export const Sidebar: React.FC<{ children?: React.ReactNode }> = ({
             </div>
           </div>
 
-          <main className="min-h-[calc(100vh-64px)]">{children}</main>
+          <main>{children}</main>
         </div>
       </div>
     </>

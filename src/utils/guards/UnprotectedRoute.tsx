@@ -5,5 +5,5 @@ import { useAuth } from "../store/useAuth";
 export function UnprotectedRoute(props: PropsWithChildren) {
   const { user } = useAuth((state) => state);
 
-  return <>{!user ? props.children : <Navigate to="/dashboard/home" />}</>;
+  return <>{!user ? props.children : <Navigate to="/profile" />}</>;
 }

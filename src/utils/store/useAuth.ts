@@ -4,6 +4,18 @@ import { Utente } from "../../model/user";
 import { AuthState } from "../../model/authState";
 import { loginApi, refreshTokenApi } from "../http";
 import { toast } from "react-toastify";
+import CryptoJS from "crypto-js";
+
+const SECRET_KEY = `${import.meta.env.VITE_SECRET}`;
+
+const encrypt = (data: Utente) => {
+  return CryptoJS.AES.encrypt(JSON.stringify(data), SECRET_KEY).toString();
+};
+
+const decrypt = (ciphertext: string) => {
+  const bytes = CryptoJS.AES.decrypt(ciphertext, SECRET_KEY);
+  return JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+};
 
 export const useAuth = create<AuthState>()(
   devtools(
@@ -57,7 +69,35 @@ export const useAuth = create<AuthState>()(
           },
         };
       },
-      { name: "auth", storage: createJSONStorage(() => localStorage) },
+      {
+        name: "auth",
+        storage: createJSONStorage(() => ({
+          getItem: (name: string): string | null => {
+            const str = localStorage.getItem(name);
+            if (!str) return null;
+            const { state } = JSON.parse(str);
+            const decryptedState = {
+              ...state,
+              user: state.user ? decrypt(state.user) : null,
+            };
+            return JSON.stringify({ state: decryptedState });
+          },
+          setItem: (name: string, value: string): void => {
+            const { state } = JSON.parse(value);
+            const encryptedState = {
+              ...state,
+              user: state.user ? encrypt(state.user) : null,
+            };
+            localStorage.setItem(
+              name,
+              JSON.stringify({ state: encryptedState }),
+            );
+          },
+          removeItem: (name: string): void => {
+            localStorage.removeItem(name);
+          },
+        })),
+      },
     ),
   ),
 );

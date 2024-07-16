@@ -9,7 +9,8 @@ export default {
       colors: {
         yellow: "#ffd52d",
         purplue: "#6b9bff",
-        darkPurplue: "#bd34fe"
+        darkPurplue: "#bd34fe",
+        grey: "#d9d8d4"
       },
     },
   },

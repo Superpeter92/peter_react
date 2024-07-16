@@ -1,5 +1,7 @@
 
 const Home: React.FC = () => {
-  return <div>Home</div>;
+  return( <div className="bg-grey">
+    prova
+  </div>);
 };
 export default Home;

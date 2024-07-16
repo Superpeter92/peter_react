@@ -43,7 +43,7 @@ axiosInstance.interceptors.response.use(
         return axiosInstance(originalRequest);
       }
     } else {
-      toast.error(error.response?.data.message, {
+      toast.error(error.response?.data.errpr, {
         position: "bottom-center",
       });
       return Promise.reject(error);

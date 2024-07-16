@@ -41,3 +41,8 @@ export async function refreshTokenApi(refresh: string): Promise<{
     return Promise.reject(err);
   }
 }
+
+export async function getUserById(id: string): Promise<Utente> {
+  const res = await axios.get<Utente>(`${BASE_URL}user/${id}`);
+  return res.data;
+}
