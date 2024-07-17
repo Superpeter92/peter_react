@@ -1,6 +1,7 @@
 import axios, { AxiosError } from "axios";
-import { Utente } from "../model/user";
+import { PaginatedUsersResponse, UserQueryParams, Utente } from "../model/user";
 import { toast } from "react-toastify";
+import axiosInstance from "./interceptor/Interceptor";
 
 const BASE_URL = `${import.meta.env.VITE_BE}`;
 export async function loginApi(
@@ -26,23 +27,51 @@ export async function refreshTokenApi(refresh: string): Promise<{
   accessToken: string;
   refreshToken: string;
 }> {
-  try {
-    const res = await axios.post<{
-      accessToken: string;
-      refreshToken: string;
-    }>(`${BASE_URL}refresh-token`, null, {
-      headers: {
-        Authorization: `Bearer ${refresh}`,
-        "Content-Type": "application/json",
-      },
-    });
-    return res.data;
-  } catch (err) {
-    return Promise.reject(err);
-  }
+  // try {
+  const res = await axiosInstance.post<{
+    accessToken: string;
+    refreshToken: string;
+  }>(
+    `${BASE_URL}refresh-token`,
+    { refreshToken: refresh },
+    {
+      // headers: {
+      //   Authorization: `Bearer ${refresh}`,
+      //   "Content-Type": "application/json",
+      // },
+    },
+  );
+  return res.data;
+  // } catch (err) {
+  //   return Promise.reject(err);
+  // }
 }
 
 export async function getUserById(id: string): Promise<Utente> {
   const res = await axios.get<Utente>(`${BASE_URL}user/${id}`);
+  return res.data;
+}
+
+export async function getUsers(
+  params: UserQueryParams,
+): Promise<PaginatedUsersResponse> {
+  const res = await axiosInstance.get<PaginatedUsersResponse>(
+    `${BASE_URL}users`,
+    {
+      params: {
+        page: params.page || 1,
+        limit: params.limit || 10,
+        cognome: params.cognome || undefined,
+        email: params.email || undefined,
+      },
+    },
+  );
+  return res.data;
+}
+
+export async function deleteUser(id: number) {
+  const res = await axiosInstance.delete<{ message: string }>(
+    `${BASE_URL}users/${String(id)}`,
+  );
   return res.data;
 }

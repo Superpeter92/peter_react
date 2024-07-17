@@ -19,16 +19,11 @@ import {
   CalendarIcon,
   XMarkIcon,
   UserGroupIcon,
-  BuildingOfficeIcon,
   ChevronUpIcon,
   MagnifyingGlassIcon,
   BriefcaseIcon,
   UserIcon,
   ClipboardDocumentListIcon,
-  Square3Stack3DIcon,
-  ComputerDesktopIcon,
-  Squares2X2Icon,
-  BuildingOffice2Icon,
 } from "@heroicons/react/24/outline";
 
 import { ArrowRightStartOnRectangleIcon } from "@heroicons/react/24/solid";
@@ -38,6 +33,7 @@ import logo from "../assets/logo.png";
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../utils/store/useAuth";
 import avatar from "../assets/profile.png";
+import SidebarNavLink from "./UI/SidebarNavLink";
 const navigation = [
   {
     name: "Disponibilità postazioni",
@@ -81,8 +77,6 @@ const navAnagrafica = [
     icon: UserGroupIcon,
   },
 ];
-
-
 
 const userNavigation = [{ name: "Profilo", path: "/profile" }];
 
@@ -142,8 +136,9 @@ export const Sidebar: React.FC<{ children?: React.ReactNode }> = ({
                       <ul role="list" className="-mx-2 space-y-1">
                         {navigation.map((item) => (
                           <li key={item.name}>
-                            <NavLink
+                            <SidebarNavLink
                               to={item.path}
+                              setSidebarOpen={setSidebarOpen}
                               className={({ isActive }) =>
                                 classNames(
                                   isActive
@@ -162,7 +157,7 @@ export const Sidebar: React.FC<{ children?: React.ReactNode }> = ({
                               />
 
                               {item.name}
-                            </NavLink>
+                            </SidebarNavLink>
                           </li>
                         ))}
                       </ul>
@@ -177,7 +172,7 @@ export const Sidebar: React.FC<{ children?: React.ReactNode }> = ({
                                 <>
                                   <DisclosureButton className="group flex w-full items-center justify-between rounded-md p-2 text-sm font-semibold leading-6 text-white hover:bg-purple-500">
                                     <div className="flex justify-start gap-x-2">
-                                      <ClipboardDocumentListIcon className="h-6 w-6 shrink-0 text-white" />
+                                      <ClipboardDocumentListIcon className="h-6 w-6 shrink-0 font-montserrat text-white" />
 
                                       <span>Anagrafica</span>
                                     </div>
@@ -192,7 +187,8 @@ export const Sidebar: React.FC<{ children?: React.ReactNode }> = ({
                                   <DisclosurePanel className="space-y-1 px-7 pb-2 text-sm text-white">
                                     {navAnagrafica.map((item) => (
                                       <li key={item.name}>
-                                        <NavLink
+                                        <SidebarNavLink
+                                          setSidebarOpen={setSidebarOpen}
                                           to={item.path}
                                           className={({ isActive }) =>
                                             classNames(
@@ -200,7 +196,7 @@ export const Sidebar: React.FC<{ children?: React.ReactNode }> = ({
                                                 ? "active bg-darkPurplue"
                                                 : "text-white hover:bg-purple-500",
 
-                                              "group flex gap-x-2 rounded-md p-2 text-sm font-semibold leading-6 text-white",
+                                              "group flex gap-x-2 rounded-md p-2 font-montserrat text-sm font-semibold leading-6 text-white",
                                             )
                                           }
                                         >
@@ -212,7 +208,7 @@ export const Sidebar: React.FC<{ children?: React.ReactNode }> = ({
                                           />
 
                                           {item.name}
-                                        </NavLink>
+                                        </SidebarNavLink>
                                       </li>
                                     ))}
                                   </DisclosurePanel>
@@ -227,7 +223,7 @@ export const Sidebar: React.FC<{ children?: React.ReactNode }> = ({
                     <li className="-mx-2 mt-auto space-y-1">
                       <button
                         onClick={logout}
-                        className="group flex w-full gap-x-2 rounded-md p-2 text-sm font-semibold leading-6 text-white hover:bg-purple-950"
+                        className="group flex w-full gap-x-2 rounded-md p-2 font-montserrat text-sm font-semibold leading-6 text-white hover:bg-purple-950"
                       >
                         <ArrowRightStartOnRectangleIcon
                           className="group-hover:white h-6 w-6 shrink-0 text-white"
@@ -270,7 +266,7 @@ export const Sidebar: React.FC<{ children?: React.ReactNode }> = ({
                         <span className="hidden lg:flex lg:items-center">
                           <span
                             aria-hidden="true"
-                            className="ml-4 text-sm font-semibold leading-6 text-white"
+                            className="ml-4 font-montserrat text-sm font-semibold leading-6 text-white"
                           >
                             {user?.nome} {user?.cognome}
                           </span>
@@ -290,7 +286,7 @@ export const Sidebar: React.FC<{ children?: React.ReactNode }> = ({
                           <MenuItem key={item.name}>
                             <NavLink
                               to={item.path}
-                              className="block px-3 py-1 text-sm leading-6 text-purplue data-[focus]:bg-gray-100"
+                              className="block px-3 py-1 font-montserrat text-sm leading-6 text-purplue data-[focus]:bg-gray-100"
                             >
                               {item.name}
                             </NavLink>

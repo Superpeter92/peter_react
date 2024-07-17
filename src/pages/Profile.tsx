@@ -8,7 +8,7 @@ const Profile: React.FC = () => {
   const password = "•••••••••";
   return (
     <div className="flex min-h-[calc(100vh-64px)] flex-col items-center justify-start bg-[url('assets/piramide.jfif')] bg-cover bg-center bg-no-repeat">
-      <Card style="w-[90%] sm:w-[50%] mt-10 mb-10">
+      <Card style="w-[90%] sm:w-[45%] mt-10 mb-10">
         <div className="my-10 text-center font-montserrat text-2xl font-medium uppercase text-purplue">
           Profilo
         </div>
@@ -30,7 +30,7 @@ const Profile: React.FC = () => {
           <div className="flex flex-col items-center justify-center p-4">
             <div className="font-montserrat text-purplue">Ruolo</div>
             <div className="font-montserrat capitalize">
-              {user?.ruolo.nome}{" "}
+              {user?.ruolo.nome === "admin" ? "Amministratore" : "Utente base"}{" "}
             </div>
           </div>
 
@@ -40,20 +40,20 @@ const Profile: React.FC = () => {
           </div>
         </div>
 
-        <div className="mt-10   flex flex-col gap-y-4 sm:flex sm:flex-row sm:items-center sm:justify-center sm:gap-x-4 ">
+        <div className="mt-10 flex flex-col gap-y-4 sm:flex sm:flex-row sm:items-center sm:justify-center sm:gap-x-4">
           <AnimatedButton
-            className="bg-purplue hover:bg-purple-950 text-white"
+            className="bg-purplue text-white hover:bg-purple-950"
             icon={<IconEdit />}
             onClick={() => {}}
           >
             Modifica
           </AnimatedButton>
           <AnimatedButton
-            className="bg-darkPurplue hover:bg-purple-200 text-white hover:text-black"
+            className="bg-darkPurplue text-white hover:bg-purple-200 hover:text-black"
             icon={<IconKey />}
             onClick={() => {}}
           >
-            Modifica password
+            Modifica Password
           </AnimatedButton>
         </div>
       </Card>

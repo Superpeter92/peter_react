@@ -52,6 +52,7 @@ export const useAuth = create<AuthState>()(
           updateRefresh: async (refreshToken: string) => {
             try {
               const refreshResponse = await refreshTokenApi(refreshToken);
+              console.log(refreshResponse, 'refreshToken state' )
               set((state) => ({
                 user: {
                   ...state.user!,
