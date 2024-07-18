@@ -18,7 +18,6 @@ type FormState = {
 };
 
 const Login: React.FC = () => {
-  const [loading, setLoading] = useState(false);
   const { login, setUser } = useAuth((state) => state);
   const navigate = useNavigate();
   const [formState, setFormState] = useState<FormState>({
@@ -53,32 +52,18 @@ const Login: React.FC = () => {
 
   useGesture(
     {
-      onDrag: ({ active, offset: [x, y] }) =>
-        api({ x, y, rotateX: 0, rotateY: 0, scale: active ? 1 : 1.1 }),
-      onPinch: ({ offset: [d, a] }) => api({ zoom: d / 200, rotateZ: a }),
-      onMove: ({ xy: [px, py], dragging }) =>
-        !dragging &&
-        api({
+      onPinch: ({ offset: [d, a] }) => api.start({ zoom: d / 200, rotateZ: a }),
+      onMove: ({ xy: [px, py] }) =>
+        api.start({
           rotateX: calcX(py, y.get()),
           rotateY: calcY(px, x.get()),
           scale: 1.1,
         }),
       onHover: ({ hovering }) =>
-        !hovering && api({ rotateX: 0, rotateY: 0, scale: 1 }),
+        api.start({ rotateX: 0, rotateY: 0, scale: hovering ? 1.1 : 1 }),
     },
     { target: domTarget, eventOptions: { passive: false } },
   );
-
-  const handleChange = (
-    field: keyof FormState,
-    value: string,
-    error: boolean,
-  ) => {
-    setFormState((prevState) => ({
-      ...prevState,
-      [field]: { value, error: error },
-    }));
-  };
 
   const isFormValid = () => {
     const hasErrors = Object.values(formState).some((field) => field.error);
@@ -97,9 +82,6 @@ const Login: React.FC = () => {
       return;
     }
 
-    console.log(formState);
-    setLoading(true);
-
     try {
       const res = await login(formState.email.value, formState.password.value);
 
@@ -110,13 +92,11 @@ const Login: React.FC = () => {
       }
 
       setUser(res);
-      navigate('/profile');
+      navigate("/profile");
     } catch (error) {
       console.error("Login error:", error);
       // Puoi aggiungere una gestione dell'errore qui, ad esempio:
       // setError("Login failed. Please try again.");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -126,12 +106,11 @@ const Login: React.FC = () => {
         ref={domTarget}
         style={{
           transform: "perspective(600px)",
-          x,
-          y,
           scale: to([scale, zoom], (s, z) => s + z),
           rotateX,
           rotateY,
           rotateZ,
+          touchAction: "none",
         }}
         className="w-2/3 rounded-md bg-white bg-opacity-50 p-10 px-10 shadow-xl drop-shadow-lg backdrop-blur-md sm:w-1/3 lg:w-1/5"
       >
@@ -144,10 +123,14 @@ const Login: React.FC = () => {
             name="email"
             label="Email"
             type="email"
+            value={formState.email.value}
             placeholder="Inserisci la tua Email"
             required={true}
-            onChange={(value: string, error: boolean) =>
-              handleChange("email", value, error)
+            onChange={(value, error) =>
+              setFormState((prev) => ({
+                ...prev,
+                email: { value, error },
+              }))
             }
             submitted={submitted}
           />
@@ -158,9 +141,13 @@ const Login: React.FC = () => {
             type="password"
             placeholder="Inserisci la tua Password"
             required={true}
-            onChange={(value: string, error: boolean) =>
-              handleChange("password", value, error)
+            onChange={(value, error) =>
+              setFormState((prev) => ({
+                ...prev,
+                password: { value, error },
+              }))
             }
+            value={formState.password.value}
             submitted={submitted}
           />
           <SpinnerButton onClick={handleSubmit} className="mt-4 w-full">

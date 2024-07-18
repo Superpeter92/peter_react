@@ -4,14 +4,14 @@ import { useInput } from "../../utils/hooks/useInput";
 
 interface InputProps {
   name: string;
-  label: string;
+  label?: string;
   type: "text" | "email" | "password" | "number";
   placeholder?: string;
   disabled?: boolean;
   required?: boolean;
-  initialValue?: string;
+  value: string; // Cambia initialValue in value
   onChange: (value: string, error: boolean) => void;
-  submitted: boolean;
+submitted?: boolean;
   login?: boolean;
 }
 
@@ -22,13 +22,13 @@ const Input: React.FC<InputProps> = ({
   placeholder,
   disabled = false,
   required = false,
-  initialValue = "",
+  value,
   onChange,
   submitted,
   login = false,
 }) => {
-  const { value, error, handleChange } = useInput({
-    initialValue,
+  const { value:inputValue, error, handleChange } = useInput({
+    value,
     name,
     required,
     type,
@@ -43,7 +43,7 @@ const Input: React.FC<InputProps> = ({
   };
 
   const inputClassName = `
-    relative w-full cursor-default rounded-lg py-2 pl-3 pr-10 h-10 text-left 
+    relative w-full cursor-default rounded-lg py-2 pl-3 pr-10 h-10 text-left disabled:bg-grey-100 
     shadow-md focus:border-gray-200 focus:ring-0 sm:text-sm border border-gray-200
     ${error && submitted ? "border-red-500" : ""}
   `;
@@ -59,9 +59,11 @@ const Input: React.FC<InputProps> = ({
 
   return (
     <div className="flex-col">
-      <label htmlFor={name} className="mb-1 text-purplue">
-        {label}
-      </label>
+      {label && (
+        <label htmlFor={name} className="mb-1 text-purplue font-montserrat">
+          {label}
+        </label>
+      )}
       <div className="relative">
         <input
           id={name}
@@ -69,7 +71,7 @@ const Input: React.FC<InputProps> = ({
           type={type === "password" && showPassword ? "text" : type}
           name={name}
           placeholder={placeholder}
-          value={value}
+          value={inputValue}
           onChange={handleChange}
           aria-invalid={error && submitted}
           className={inputClassName}
@@ -89,7 +91,7 @@ const Input: React.FC<InputProps> = ({
         )}
       </div>
       {error && submitted && (
-        <p className="text-red-700">{getErrorMessage()}</p>
+        <p className="text-red-700 font-montserrat text-sm">{getErrorMessage()}</p>
       )}
     </div>
   );

@@ -40,7 +40,6 @@ axiosInstance.interceptors.response.use(
         return Promise.reject(error);
       } else {
         await useAuth.getState().updateRefresh(refreshToken!);
-        console.log(refreshToken)
         return axiosInstance(originalRequest);
       }
     } else {

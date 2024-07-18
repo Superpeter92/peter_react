@@ -2,6 +2,7 @@ import axios, { AxiosError } from "axios";
 import { PaginatedUsersResponse, UserQueryParams, Utente } from "../model/user";
 import { toast } from "react-toastify";
 import axiosInstance from "./interceptor/Interceptor";
+import { Ruolo } from "../model/role";
 
 const BASE_URL = `${import.meta.env.VITE_BE}`;
 export async function loginApi(
@@ -48,7 +49,7 @@ export async function refreshTokenApi(refresh: string): Promise<{
 }
 
 export async function getUserById(id: string): Promise<Utente> {
-  const res = await axios.get<Utente>(`${BASE_URL}user/${id}`);
+  const res = await axiosInstance.get<Utente>(`${BASE_URL}user/${id}`);
   return res.data;
 }
 
@@ -73,5 +74,10 @@ export async function deleteUser(id: number) {
   const res = await axiosInstance.delete<{ message: string }>(
     `${BASE_URL}users/${String(id)}`,
   );
+  return res.data;
+}
+
+export async function getRoles(): Promise<Ruolo[]> {
+  const res = await axiosInstance.get<Ruolo[]>(`${BASE_URL}roles`);
   return res.data;
 }

@@ -6,8 +6,13 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import AnimatedSuspense from "./components/AnimatedSuspance";
 
 function App() {
-  const queryClient = new QueryClient();
-
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        suspense: true,
+      },
+    },
+  });
   return (
     <>
       <QueryClientProvider client={queryClient}>

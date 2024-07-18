@@ -1,28 +1,28 @@
 import { useState, useEffect, useCallback } from "react";
+import { Option } from "../../components/UI/Select";
 
 interface UseSelectProps {
-  initialValue: string;
+  value: Option | null;
   required?: boolean;
-  onChange: (value: string, error: boolean) => void;
+  onChange: (value: Option | null, error: boolean) => void;
 }
 
 interface UseSelectReturn {
-  selectedValue: string;
+  selectedValue: Option | null;
   error: boolean;
-  handleChange: (value: string) => void;
+  handleChange: (value: Option | null) => void;
 }
 
 export const useSelect = ({
-  initialValue,
+  value, // Usiamo value invece di initialValue
   required = false,
   onChange,
 }: UseSelectProps): UseSelectReturn => {
-  const [selectedValue, setSelectedValue] = useState(initialValue);
   const [error, setError] = useState(false);
 
   const validateSelect = useCallback(
-    (value: string): boolean => {
-      if (required && value.trim() === "") {
+    (selectValue: Option | null): boolean => {
+      if (required && (!selectValue || selectValue.nome.trim() === "")) {
         return false;
       }
       return true;
@@ -31,21 +31,20 @@ export const useSelect = ({
   );
 
   useEffect(() => {
-    const isValid = validateSelect(selectedValue);
+    const isValid = validateSelect(value);
     setError(!isValid);
-  }, [selectedValue, validateSelect]);
+  }, [value, validateSelect]);
 
   const handleChange = useCallback(
-    (value: string) => {
-      setSelectedValue(value);
-      const isValid = validateSelect(value);
-      onChange(value, !isValid);
+    (newValue: Option | null) => {
+      const isValid = validateSelect(newValue);
+      onChange(newValue, !isValid);
     },
     [validateSelect, onChange]
   );
 
   return {
-    selectedValue,
+    selectedValue: value, // Usiamo il value passato come prop
     error,
     handleChange,
   };

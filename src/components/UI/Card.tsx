@@ -1,10 +1,10 @@
-const Card: React.FC<{ style?: string; children: React.ReactNode }> = ({
-  style = "",
+const Card: React.FC<{ className?: string; children: React.ReactNode }> = ({
+  className = "",
   children,
 }) => {
   return (
     <div
-      className={`${style} rounded-md bg-white bg-opacity-50 p-10 px-10 shadow-xl drop-shadow-lg backdrop-blur-md`}
+      className={`${className} rounded-md bg-white ring-1 ring-slate-400 bg-opacity-50 p-10  shadow-xl drop-shadow-lg backdrop-blur-md`}
     >
       {children}
     </div>

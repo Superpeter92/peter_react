@@ -9,6 +9,7 @@ const Login = lazy(() => import("./pages/Login"));
 const Home = lazy(() => import("./pages/Home"));
 const Profile = lazy(() => import("./pages/Profile"));
 const UsersList = lazy(() => import("./pages/UsersList"));
+const User = lazy(() => import("./pages/NewEditUser"));
 
 export const router = createBrowserRouter([
   {
@@ -32,6 +33,8 @@ export const router = createBrowserRouter([
       { path: "home", element: <Home /> },
       { path: "profile", element: <Profile /> },
       { path: "users-list", element: <UsersList /> },
+      { path: "user-new", element: <User /> },
+      { path: "user-edit/:id", element: <User /> },
     ],
   },
   {
