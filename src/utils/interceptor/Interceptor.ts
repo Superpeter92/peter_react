@@ -11,10 +11,12 @@ const axiosInstance = Axios.create({
   },
 });
 
+let isRefreshing = false;
+let refreshPromise: Promise<void> | null = null;
+
 axiosInstance.interceptors.request.use(
   async (config) => {
     const accessToken = useAuth.getState().user?.accessToken;
-
     if (accessToken) {
       (config.headers as AxiosHeaders).set(
         "Authorization",
@@ -23,9 +25,7 @@ axiosInstance.interceptors.request.use(
     }
     return config;
   },
-  (error) => {
-    Promise.reject(error);
-  },
+  (error) => Promise.reject(error)
 );
 
 axiosInstance.interceptors.response.use(
@@ -33,22 +33,47 @@ axiosInstance.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
     const refreshToken = useAuth.getState().user?.refreshToken;
-    if (error.response?.status === 401) {
+
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+
       if (isTokenExpired(refreshToken!)) {
         useAuth.getState().logout();
         toast.error("Sessione Scaduta", { position: "bottom-center" });
         return Promise.reject(error);
-      } else {
-        await useAuth.getState().updateRefresh(refreshToken!);
-        return axiosInstance(originalRequest);
       }
-    } else {
-      toast.error(error.response?.data.errpr, {
-        position: "bottom-center",
-      });
-      return Promise.reject(error);
+
+      if (!isRefreshing) {
+        isRefreshing = true;
+        refreshPromise = useAuth.getState().updateRefresh(refreshToken!)
+          .then(() => {
+            isRefreshing = false;
+            refreshPromise = null;
+          })
+          .catch((refreshError) => {
+            isRefreshing = false;
+            refreshPromise = null;
+            useAuth.getState().logout();
+            toast.error("Errore durante il refresh della sessione", { position: "bottom-center" });
+            throw refreshError;
+          });
+      }
+
+      try {
+        await refreshPromise;
+        return axiosInstance(originalRequest);
+      } catch (refreshError) {
+        return Promise.reject(refreshError);
+      }
     }
-  },
+
+    if (error.response?.data?.error) {
+      toast.error(error.response.data.error, { position: "bottom-center" });
+    } else {
+      toast.error("Si è verificato un errore", { position: "bottom-center" });
+    }
+    return Promise.reject(error);
+  }
 );
 
 export default axiosInstance;
@@ -56,11 +81,7 @@ export default axiosInstance;
 export function isTokenExpired(token: string): boolean {
   try {
     const decoded = jwtDecode(token);
-    if (decoded.exp && decoded.exp < Date.now() / 1000) {
-      return true;
-    } else {
-      return false;
-    }
+    return decoded.exp ? decoded.exp < Date.now() / 1000 : false;
   } catch (error) {
     return true;
   }

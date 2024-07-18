@@ -74,7 +74,7 @@ const UsersList: React.FC = () => {
     data: usersList,
     isLoading,
     error,
-  } = useQuery(["users", params], () => getUsers(params), {
+  } = useQuery(["users", params], async () => await getUsers(params), {
     keepPreviousData: true,
     staleTime: 5000, // 5 secondi
   });
