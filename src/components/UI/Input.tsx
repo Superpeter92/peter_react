@@ -11,7 +11,7 @@ interface InputProps {
   required?: boolean;
   value: string; // Cambia initialValue in value
   onChange: (value: string, error: boolean) => void;
-submitted?: boolean;
+  submitted?: boolean;
   login?: boolean;
 }
 
@@ -27,7 +27,11 @@ const Input: React.FC<InputProps> = ({
   submitted,
   login = false,
 }) => {
-  const { value:inputValue, error, handleChange } = useInput({
+  const {
+    value: inputValue,
+    error,
+    handleChange,
+  } = useInput({
     value,
     name,
     required,
@@ -47,7 +51,7 @@ const Input: React.FC<InputProps> = ({
     shadow-md focus:border-gray-200 focus:ring-0 sm:text-sm border border-gray-200
     ${error && submitted ? "border-red-500" : ""}
   `;
-
+ console.log(error, type)
   const getErrorMessage = () => {
     if (required && value.trim() === "") return "Campo Obbligatorio";
     if (type === "email" && !login && value.trim() !== "")
@@ -58,9 +62,9 @@ const Input: React.FC<InputProps> = ({
   };
 
   return (
-    <div className="flex-col">
+    <div className="flex flex-col">
       {label && (
-        <label htmlFor={name} className="mb-1 text-purplue font-montserrat">
+        <label htmlFor={name} className="mb-1 font-montserrat text-purplue">
           {label}
         </label>
       )}
@@ -91,7 +95,9 @@ const Input: React.FC<InputProps> = ({
         )}
       </div>
       {error && submitted && (
-        <p className="text-red-700 font-montserrat text-sm">{getErrorMessage()}</p>
+        <p className="font-montserrat text-sm text-red-700">
+          {getErrorMessage()}
+        </p>
       )}
     </div>
   );

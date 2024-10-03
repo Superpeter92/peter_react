@@ -8,6 +8,7 @@ export interface Utente {
   ruolo: Ruolo;
   accessToken: string;
   refreshToken: string;
+  password?: string;
 }
 
 

@@ -29,24 +29,9 @@ type FormField = {
 type FormState = {
   email: FormField;
   cognome: FormField;
-  // categoria: {
-  //   value: Option | null;
-  //   error: boolean;
-  // };
 };
 
-// const categorie: Option[] = [
-//   { id: "1", nome: "Elettronica" },
-//   { id: "2", nome: "Abbigliamento" },
-//   { id: "3", nome: "Libri" },
-//   { id: "4", nome: "Casa e Giardino" },
-//   { id: "5", nome: "Sport e Tempo Libero" },
-//   { id: "6", nome: "Bellezza e Salute" },
-//   { id: "7", nome: "Giocattoli e Giochi" },
-//   { id: "8", nome: "Alimentari" },
-//   { id: "9", nome: "Auto e Moto" },
-//   { id: "10", nome: "Musica e Film" },
-// ];
+
 
 const UsersList: React.FC = () => {
   const { user } = useAuth((state) => state);
@@ -54,7 +39,6 @@ const UsersList: React.FC = () => {
   const [formState, setFormState] = useState<FormState>({
     email: { value: "", error: true },
     cognome: { value: "", error: true },
-    // categoria: { value: null, error: false },
   });
   const [params, setParams] = useState<UserQueryParams>({
     page: 1,

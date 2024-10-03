@@ -13,6 +13,7 @@ const axiosInstance = Axios.create({
 
 let isRefreshing = false;
 let refreshPromise: Promise<void> | null = null;
+let isLoggedOut = false;
 
 axiosInstance.interceptors.request.use(
   async (config) => {
@@ -34,12 +35,15 @@ axiosInstance.interceptors.response.use(
     const originalRequest = error.config;
     const refreshToken = useAuth.getState().user?.refreshToken;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (error.response?.status === 401 && !originalRequest._retry && !isLoggedOut) {
       originalRequest._retry = true;
 
       if (isTokenExpired(refreshToken!)) {
-        useAuth.getState().logout();
-        toast.error("Sessione Scaduta", { position: "bottom-center" });
+        if (!isLoggedOut) {
+          isLoggedOut = true;
+          useAuth.getState().logout();
+          toast.error("Sessione Scaduta", { position: "bottom-center" });
+        }
         return Promise.reject(error);
       }
 
@@ -53,8 +57,11 @@ axiosInstance.interceptors.response.use(
           .catch((refreshError) => {
             isRefreshing = false;
             refreshPromise = null;
-            useAuth.getState().logout();
-            toast.error("Errore durante il refresh della sessione", { position: "bottom-center" });
+            if (!isLoggedOut) {
+              isLoggedOut = true;
+              useAuth.getState().logout();
+              toast.error("Errore durante il refresh della sessione", { position: "bottom-center" });
+            }
             throw refreshError;
           });
       }
@@ -67,9 +74,9 @@ axiosInstance.interceptors.response.use(
       }
     }
 
-    if (error.response?.data?.error) {
+    if (error.response?.data?.error && !isLoggedOut) {
       toast.error(error.response.data.error, { position: "bottom-center" });
-    } else {
+    } else if (!isLoggedOut) {
       toast.error("Si è verificato un errore", { position: "bottom-center" });
     }
     return Promise.reject(error);

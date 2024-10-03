@@ -35,7 +35,7 @@ export const useInput = ({
       if (type === "email" && !login && !EMAIL_REGEX.test(inputValue)) {
         return false;
       }
-      if (type === "password" && !login && !PASSWORD_REGEX.test(inputValue)) {
+      if (type === "password" && !login && inputValue.trim() !== "" && !PASSWORD_REGEX.test(inputValue)) {
         return false;
       }
       return true;

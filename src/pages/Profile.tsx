@@ -11,8 +11,17 @@ import {
 } from "@tabler/icons-react";
 import avatar from "../assets/profile.png";
 import { useNavigate } from "react-router-dom";
+import { getUserById } from "../utils/http";
+import { useQuery } from "react-query";
 const Profile: React.FC = () => {
   const { user } = useAuth((state) => state);
+
+  const {
+    data: fatchedUser,
+  } = useQuery(
+    ["user", user?.id],
+    async () => await getUserById(String(user?.id)),
+  );
   const navigate = useNavigate();
   const password = "•••••••••";
   return (
@@ -31,7 +40,7 @@ const Profile: React.FC = () => {
               <div className="font-montserrat text-purplue">Nome</div>
               <IconUser className="ml-2 text-purplue" />
             </div>
-            <div className="font-montserrat">{user?.nome} </div>
+            <div className="font-montserrat">{fatchedUser?.nome} </div>
           </div>
 
           <div className="flex flex-col items-center justify-center p-4">
@@ -39,14 +48,14 @@ const Profile: React.FC = () => {
               <div className="font-montserrat text-purplue">Cognome</div>
               <IconUserFilled className="ml-2 text-purplue" />
             </div>
-            <div className="font-montserrat">{user?.cognome} </div>
+            <div className="font-montserrat">{fatchedUser?.cognome} </div>
           </div>
           <div className="flex flex-col items-center justify-center p-4">
             <div className="flex">
               <div className="font-montserrat text-purplue">Email</div>
               <IconMail className="ml-2 text-purplue" />
             </div>
-            <div className="font-montserrat">{user?.email} </div>
+            <div className="font-montserrat">{fatchedUser?.email} </div>
           </div>
 
           <div className="flex flex-col items-center justify-center p-4">
@@ -55,7 +64,9 @@ const Profile: React.FC = () => {
               <IconSettings className="ml-2 text-purplue" />
             </div>
             <div className="font-montserrat capitalize">
-              {user?.ruolo.nome === "admin" ? "Amministratore" : "Utente base"}{" "}
+              {fatchedUser?.ruolo.nome === "admin"
+                ? "Amministratore"
+                : "Utente base"}{" "}
             </div>
           </div>
 
@@ -68,20 +79,13 @@ const Profile: React.FC = () => {
           </div>
         </div>
 
-        <div className="mt-10 flex flex-col gap-y-4 sm:flex sm:flex-row sm:items-center sm:justify-center sm:gap-x-4">
+        <div className="mt-10 flex items-center justify-center">
           <AnimatedButton
             className="bg-purplue text-white hover:bg-purple-950"
             icon={<IconEdit />}
             onClick={() => navigate(`/user-edit/${user?.id}`)}
           >
             Modifica
-          </AnimatedButton>
-          <AnimatedButton
-            className="bg-darkPurplue text-white hover:bg-purple-200 hover:text-black"
-            icon={<IconKey />}
-            onClick={() => {}}
-          >
-            Modifica Password
           </AnimatedButton>
         </div>
       </Card>

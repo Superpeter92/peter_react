@@ -81,3 +81,23 @@ export async function getRoles(): Promise<Ruolo[]> {
   const res = await axiosInstance.get<Ruolo[]>(`${BASE_URL}roles`);
   return res.data;
 }
+
+export async function registerUser(
+  user: Partial<Utente>,
+): Promise<{ message: string }> {
+  const res = await axiosInstance.post<{ message: string }>(
+    `${BASE_URL}register`,
+    user,
+  );
+  return res.data;
+}
+
+export async function updateUser(
+  user: Partial<Utente>,
+): Promise<{ message: string }> {
+  const res = await axiosInstance.put<{ message: string }>(
+    `${BASE_URL}user/${user.id}`,
+    user,
+  );
+  return res.data;
+}
