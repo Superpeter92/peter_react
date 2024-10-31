@@ -11,6 +11,7 @@ import { IconUserEdit, IconUserPlus } from "@tabler/icons-react";
 import { toast } from "react-toastify";
 import { Utente } from "../model/user";
 import SpinnerButton from "../components/UI/SpinnerButton";
+import { FeatureCode } from "../model/enum/featuresCode.enum";
 type FormField = {
   value: string;
   error: boolean;
@@ -27,7 +28,10 @@ type FormState = {
 const NewEditUser: React.FC = () => {
   const { id } = useParams();
   const { user: currentUser } = useAuth();
-  const isCurrentUserAdmin = currentUser?.ruolo?.nome === "admin";
+  const isCurrentUserAdmin = currentUser?.ruolo.features?.some(
+    (feature) =>
+      feature.code === FeatureCode.GESTIONE_UTENTI && feature.id === 3,
+  );
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -62,7 +66,7 @@ const NewEditUser: React.FC = () => {
       : {};
 
     // Se l'utente è admin e sta modificando se stesso, non includere il ruolo nello state
-    if (id && isCurrentUserAdmin && id === String(currentUser.id)) {
+    if (id && isCurrentUserAdmin && id === String(currentUser!.id)) {
       return { ...baseState, ...passwordFields };
     }
 
@@ -269,7 +273,7 @@ const NewEditUser: React.FC = () => {
             roles?.length > 0 &&
             formState.ruolo &&
             isCurrentUserAdmin &&
-            id !== String(currentUser.id) && (
+            id !== String(currentUser!.id) && (
               <Select
                 label="Ruolo"
                 name="ruolo"
