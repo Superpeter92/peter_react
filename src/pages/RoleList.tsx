@@ -146,7 +146,7 @@ const RoleList: React.FC = () => {
                             scope="col"
                             className="px-3 py-3.5 text-left font-montserrat text-sm font-semibold text-gray-900"
                           >
-                            Codice
+                            Funzionalità
                           </th>
                           <th
                             scope="col"
@@ -165,7 +165,7 @@ const RoleList: React.FC = () => {
                             <td className="whitespace-nowrap px-3 py-4 text-left font-montserrat text-sm text-gray-500">
                               {r.features?.map((fp, index) => (
                                 <div key={index}>
-                                  {fp.code} - {fp.name} -{" "}
+                                  {fp.name} -{" "}
                                   {fp.permissionId === 3
                                     ? "Scrittura"
                                     : "Lettura"}
