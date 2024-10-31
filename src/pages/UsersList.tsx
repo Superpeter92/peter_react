@@ -50,7 +50,7 @@ const UsersList: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const queryClient = useQueryClient();
 
-  const { isLoading: mutateDeleteLoading, mutate: deleteUserMutate } =
+  const { mutate: deleteUserMutate } =
     useMutation(deleteUser);
 
   const [selectedUser, setSelectedUser] = useState<Utente | null>(null);
@@ -347,9 +347,7 @@ const UsersList: React.FC = () => {
                               {utente.email}
                             </td>
                             <td className="whitespace-nowrap px-3 py-4 text-left font-montserrat text-sm text-gray-500">
-                              {utente.ruolo.nome === "admin"
-                                ? "Amministratore"
-                                : "Utente base"}
+                              {utente.ruolo.nome}
                             </td>
 
                             <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right sm:pr-6">

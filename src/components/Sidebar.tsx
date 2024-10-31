@@ -1,5 +1,4 @@
-import { useState } from "react";
-
+import { ComponentType, SVGProps, useState } from "react";
 import {
   Dialog,
   DialogBackdrop,
@@ -16,83 +15,142 @@ import {
 
 import {
   Bars3Icon,
-  CalendarIcon,
   XMarkIcon,
-  UserGroupIcon,
   ChevronUpIcon,
-  MagnifyingGlassIcon,
-  BriefcaseIcon,
   UserIcon,
+  CalendarIcon,
+  MagnifyingGlassIcon,
+  UserGroupIcon,
   ClipboardDocumentListIcon,
+  Cog6ToothIcon,
 } from "@heroicons/react/24/outline";
 
 import { ArrowRightStartOnRectangleIcon } from "@heroicons/react/24/solid";
-
-import logo from "../assets/logo.png";
-
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../utils/store/useAuth";
+import { useQuery } from "react-query";
 import avatar from "../assets/profile.png";
+import logo from "../assets/logo.png";
+import { FeatureWithPermissions } from "../model/feature";
+import { getFeatureTree } from "../utils/http";
 import SidebarNavLink from "./UI/SidebarNavLink";
-const navigation = [
-  {
-    name: "Disponibilità postazioni",
+// Definizione del tipo per le icone
+type IconType = ComponentType<SVGProps<SVGSVGElement>>;
 
-    path: "/dashboard/prenotazione-posti",
+// Interfaccia per il mapping delle icone
+interface IconMap {
+  [key: string]: IconType;
+}
+// Interfaces
 
-    icon: CalendarIcon,
-  },
 
-  {
-    name: "Le mie prenotazioni",
 
-    path: "/dashboard/gestione-prenotazioni",
 
-    icon: MagnifyingGlassIcon,
-  },
-];
-
-const navAnagrafica = [
-  {
-    name: "Gestione Utenti",
-
-    path: "/users-list",
-
-    icon: UserIcon,
-  },
-
-  {
-    name: "Gestione Ruoli",
-
-    path: "/dashboard/lista-ruoli",
-
-    icon: BriefcaseIcon,
-  },
-
-  {
-    name: "Gestione Team",
-
-    path: "/dashboard/lista-teams",
-
-    icon: UserGroupIcon,
-  },
-];
-
-const userNavigation = [{ name: "Profilo", path: "/profile" }];
+// Helper functions
+const getIconComponent = (iconName: string): IconType => {
+  const icons: IconMap = {
+    UserIcon,
+    CalendarIcon,
+    MagnifyingGlassIcon,
+    UserGroupIcon,
+    ClipboardDocumentListIcon,
+    Cog6ToothIcon,
+  };
+  return icons[iconName] || UserIcon;
+};
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
+
+
+// DynamicNavItem Component
+const DynamicNavItem: React.FC<{
+  feature: FeatureWithPermissions;
+  setSidebarOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+}> = ({ feature, setSidebarOpen }) => {
+  const IconComponent = getIconComponent(feature.icon);
+
+  if (feature.children && feature.children.length > 0) {
+    return (
+      <Disclosure>
+        {({ open }) => (
+          <>
+            <DisclosureButton className="group flex w-full items-center justify-between rounded-md p-2 text-sm font-semibold leading-6 text-white hover:bg-purple-500">
+              <div className="flex justify-start gap-x-2">
+                <IconComponent className="h-6 w-6 shrink-0 text-white" />
+                <span>{feature.name}</span>
+              </div>
+              <ChevronUpIcon
+                className={`${
+                  open ? "rotate-180 transform" : ""
+                } h-5 w-5 text-white`}
+              />
+            </DisclosureButton>
+            <DisclosurePanel className="space-y-1 px-7 py-2 text-sm text-white">
+              {feature.children.map((child) => (
+                <DynamicNavItem
+                  key={child.id}
+                  feature={child}
+                  setSidebarOpen={setSidebarOpen}
+                />
+              ))}
+            </DisclosurePanel>
+          </>
+        )}
+      </Disclosure>
+    );
+  }
+
+  return (
+    <SidebarNavLink
+      to={feature.path}
+      setSidebarOpen={setSidebarOpen}
+      className={({ isActive }) =>
+        classNames(
+          isActive
+            ? "active bg-darkPurplue"
+            : "text-white hover:bg-purple-500",
+          "group flex gap-x-2 rounded-md p-2 text-sm font-semibold leading-6 text-white"
+        )
+      }
+    >
+      <IconComponent
+        className="h-6 w-6 shrink-0 text-white"
+        aria-hidden="true"
+      />
+      {feature.name}
+    </SidebarNavLink>
+  );
+};
+
+// Main Sidebar Component
 export const Sidebar: React.FC<{ children?: React.ReactNode }> = ({
   children,
 }) => {
   const { user, logout } = useAuth((state) => state);
-
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // Fetch delle feature
+  const { data: featureTree, isLoading } = useQuery<FeatureWithPermissions[]>(
+    ["getFeatureTree", user?.ruolo.id],
+    async () => await getFeatureTree(user!.ruolo.id),
+    {
+      enabled: !!user?.ruolo.id,
+      refetchOnMount: true,
+      refetchOnWindowFocus: true,
+    }
+  );
+
+  // User navigation items
+  const userNavigation = [{ name: "Profilo", path: "/profile" }];
+
+  // Filter features based on user permissions
   return (
     <>
       <div>
+        {/* Mobile sidebar */}
         <Dialog
           open={sidebarOpen}
           onClose={setSidebarOpen}
@@ -108,7 +166,6 @@ export const Sidebar: React.FC<{ children?: React.ReactNode }> = ({
               transition
               className="relative mr-16 flex w-full max-w-xs flex-1 transform transition duration-300 ease-in-out data-[closed]:-translate-x-full"
             >
-              {" "}
               <TransitionChild>
                 <div className="absolute left-full top-0 flex w-16 justify-center pt-5 duration-300 ease-in-out data-[closed]:opacity-0">
                   <button
@@ -124,109 +181,33 @@ export const Sidebar: React.FC<{ children?: React.ReactNode }> = ({
                   </button>
                 </div>
               </TransitionChild>
-              {/* Sidebar component, swap this element with another sidebar if you like */}
+
+              {/* Sidebar content */}
               <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-purplue px-6 pb-4">
-                <div className="flex h-16 shrink-0 items-center justify-between">
+                <div className="flex h-16 shrink-0 items-center">
                   <img className="h-8 w-auto" src={logo} alt="logo" />
                 </div>
 
                 <nav className="flex flex-1 flex-col">
                   <ul role="list" className="flex flex-1 flex-col gap-y-1">
-                    <li>
-                      <ul role="list" className="-mx-2 space-y-1">
-                        {navigation.map((item) => (
-                          <li key={item.name}>
-                            <SidebarNavLink
-                              to={item.path}
-                              setSidebarOpen={setSidebarOpen}
-                              className={({ isActive }) =>
-                                classNames(
-                                  isActive
-                                    ? "active bg-darkPurplue"
-                                    : "text-white hover:bg-purple-500",
+                    {/* Dynamic Feature Navigation */}
+                    {!isLoading && featureTree?.map((feature) => (
+                      <li key={feature.id}>
+                        <DynamicNavItem
+                          feature={feature}
+                          setSidebarOpen={setSidebarOpen}
+                        />
+                      </li>
+                    ))}
 
-                                  "group flex gap-x-2 rounded-md p-2 text-sm font-semibold leading-6 text-white",
-                                )
-                              }
-                            >
-                              <item.icon
-                                className={classNames(
-                                  "h-6 w-6 shrink-0 text-white",
-                                )}
-                                aria-hidden="true"
-                              />
-
-                              {item.name}
-                            </SidebarNavLink>
-                          </li>
-                        ))}
-                      </ul>
-                    </li>
-
-                    <li>
-                      {user?.ruolo.nome === "admin" && (
-                        <>
-                          <ul role="list" className="-mx-2 space-y-1">
-                            <Disclosure>
-                              {({ open }) => (
-                                <>
-                                  <DisclosureButton className="group flex w-full items-center justify-between rounded-md p-2 text-sm font-semibold leading-6 text-white hover:bg-purple-500">
-                                    <div className="flex justify-start gap-x-2">
-                                      <ClipboardDocumentListIcon className="h-6 w-6 shrink-0 font-montserrat text-white" />
-
-                                      <span>Anagrafica</span>
-                                    </div>
-
-                                    <ChevronUpIcon
-                                      className={`${
-                                        open ? "rotate-180 transform" : ""
-                                      } h-5 w-5 text-white`}
-                                    />
-                                  </DisclosureButton>
-
-                                  <DisclosurePanel className="space-y-1 px-7 pb-2 text-sm text-white">
-                                    {navAnagrafica.map((item) => (
-                                      <li key={item.name}>
-                                        <SidebarNavLink
-                                          setSidebarOpen={setSidebarOpen}
-                                          to={item.path}
-                                          className={({ isActive }) =>
-                                            classNames(
-                                              isActive
-                                                ? "active bg-darkPurplue"
-                                                : "text-white hover:bg-purple-500",
-
-                                              "group flex gap-x-2 rounded-md p-2 font-montserrat text-sm font-semibold leading-6 text-white",
-                                            )
-                                          }
-                                        >
-                                          <item.icon
-                                            className={classNames(
-                                              "h-6 w-6 shrink-0 text-white",
-                                            )}
-                                            aria-hidden="true"
-                                          />
-
-                                          {item.name}
-                                        </SidebarNavLink>
-                                      </li>
-                                    ))}
-                                  </DisclosurePanel>
-                                </>
-                              )}
-                            </Disclosure>
-                          </ul>
-                        </>
-                      )}
-                    </li>
-
+                    {/* Logout Button */}
                     <li className="-mx-2 mt-auto space-y-1">
                       <button
                         onClick={logout}
                         className="group flex w-full gap-x-2 rounded-md p-2 font-montserrat text-sm font-semibold leading-6 text-white hover:bg-purple-950"
                       >
                         <ArrowRightStartOnRectangleIcon
-                          className="group-hover:white h-6 w-6 shrink-0 text-white"
+                          className="h-6 w-6 shrink-0 text-white"
                           aria-hidden="true"
                         />
                         Logout
@@ -239,24 +220,25 @@ export const Sidebar: React.FC<{ children?: React.ReactNode }> = ({
           </div>
         </Dialog>
 
-        {/* Static sidebar for desktop */}
-
+        {/* Static sidebar for desktop and header */}
         <div>
           <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 bg-purplue px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
             <button
               type="button"
               className="-m-2.5 p-2.5 text-gray-700"
-              onClick={() => setSidebarOpen((prev) => !prev)}
+              onClick={() => setSidebarOpen(true)}
             >
+              <span className="sr-only">Open sidebar</span>
               <Bars3Icon className="h-6 w-6 text-white" aria-hidden="true" />
             </button>
+
             <NavLink to="/">
               <img className="h-8 w-auto" src={logo} alt="logo" />
             </NavLink>
+
+            {/* Profile dropdown */}
             <div className="flex flex-1 justify-end gap-x-4 self-stretch lg:gap-x-6">
               <div className="flex items-center gap-x-4 lg:gap-x-6">
-                {/* Profile section */}
-
                 <Menu as="div" className="relative">
                   {({ open }) => (
                     <>
@@ -265,7 +247,6 @@ export const Sidebar: React.FC<{ children?: React.ReactNode }> = ({
                         <img src={avatar} width="40" alt="avatar" />
                         <span className="hidden lg:flex lg:items-center">
                           <span
-                            aria-hidden="true"
                             className="ml-4 font-montserrat text-sm font-semibold leading-6 text-white"
                           >
                             {user?.nome} {user?.cognome}
@@ -273,20 +254,20 @@ export const Sidebar: React.FC<{ children?: React.ReactNode }> = ({
                           <ChevronUpIcon
                             className={classNames(
                               open ? "rotate-180 transform" : "",
-                              "ml-2 h-5 w-5 text-white",
+                              "ml-2 h-5 w-5 text-white"
                             )}
                           />
                         </span>
                       </MenuButton>
                       <MenuItems
                         transition
-                        className="absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
+                        className="absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none"
                       >
                         {userNavigation.map((item) => (
                           <MenuItem key={item.name}>
                             <NavLink
                               to={item.path}
-                              className="block px-3 py-1 font-montserrat text-sm leading-6 text-purplue data-[focus]:bg-gray-100"
+                              className="block px-3 py-1 font-montserrat text-sm leading-6 text-purplue hover:bg-gray-100"
                             >
                               {item.name}
                             </NavLink>
