@@ -64,9 +64,7 @@ const Profile: React.FC = () => {
               <IconSettings className="ml-2 text-purplue" />
             </div>
             <div className="font-montserrat capitalize">
-              {fatchedUser?.ruolo.nome === "admin"
-                ? "Amministratore"
-                : "Utente base"}{" "}
+              {fatchedUser?.ruolo.nome}
             </div>
           </div>
 

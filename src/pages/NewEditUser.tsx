@@ -11,7 +11,7 @@ import { IconUserEdit, IconUserPlus } from "@tabler/icons-react";
 import { toast } from "react-toastify";
 import { Utente } from "../model/user";
 import SpinnerButton from "../components/UI/SpinnerButton";
-import { FeatureCode } from "../model/enum/featuresCode.enum";
+import { FeaturesCode } from "../model/enum/featuresCode";
 type FormField = {
   value: string;
   error: boolean;
@@ -30,7 +30,7 @@ const NewEditUser: React.FC = () => {
   const { user: currentUser } = useAuth();
   const isCurrentUserAdmin = currentUser?.ruolo.features?.some(
     (feature) =>
-      feature.code === FeatureCode.GESTIONE_UTENTI && feature.id === 3,
+      feature.code === FeaturesCode.GESTIONE_UTENTI && feature.permissionId === 3,
   );
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -47,7 +47,7 @@ const NewEditUser: React.FC = () => {
   );
   const { mutate: mutateRegister } = useMutation(registerUser);
   const { mutate: mutateUpdate } = useMutation(updateUser);
-
+  console.log(currentUser, 'currentUser')
   const { data: roles } = useQuery(["getRoles"], async () => await getRoles());
   const [formState, setFormState] = useState<FormState>(() => {
     const baseState = {
